@@ -1,0 +1,37 @@
+version: '2.23.0'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql_db
+    command: --default_authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'ProjetoSD'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'senha1234'
+      MYSQL_ROOT_PASSWORD: 'senha1234'
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  spring-app:
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    container_name: spring_app
+    depends_on:
+      - mysql
+    ports:
+      - '8080:8080'
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:mysql://mysql:3306/ProjetoSD?useSSL=false&serverTimezone=UTC'
+      SPRING_DATASOURCE_USERNAME: 'user'
+      SPRING_DATASOURCE_PASSWORD: 'senha1234'
+    volumes:
+      - ./projeto-sd:/app
+
+volumes:
+  mysql_data:
+
