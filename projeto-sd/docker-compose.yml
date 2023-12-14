@@ -1,5 +1,9 @@
 version: '2.23.0'
 
+networks:
+  rede:
+    driver: bridge
+
 services:
   mysql:
     image: mysql:latest
@@ -15,12 +19,15 @@ services:
       - '3306:3306'
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - rede
 
   spring-app:
     build: 
-      context: ./
+      context: .
       dockerfile: Dockerfile
     container_name: spring_app
+    restart: always
     depends_on:
       - mysql
     ports:
@@ -30,7 +37,9 @@ services:
       SPRING_DATASOURCE_USERNAME: 'user'
       SPRING_DATASOURCE_PASSWORD: 'senha1234'
     volumes:
-      - ./projeto-sd:/app
+      - .:/app
+    networks:
+      - rede
 
 volumes:
   mysql_data:
